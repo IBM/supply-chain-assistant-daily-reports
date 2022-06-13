@@ -1,0 +1,27 @@
+{
+  "name": "supply-chain-assistant-daily-reports",
+  "version": "1.0.0",
+  "description": "A sample assistant for IBM Supply Chain Intelligence Suite",
+  "author": "Donna Byron",
+  "license": "Apache-2.0",
+  "files": [
+    "README.md",
+    "LICENSE.txt",
+    "src/"
+  ],
+  "scripts": {
+    "build": "yarn install && yarn lint",
+    "clean": "rm -rf node_modules/**",
+    "lint": "eslint src",
+    "test": "yarn test:skill && yarn test:accuracy",
+    "test:accuracy": "jest accuracy*.spec.js",
+    "test:skill": "jest skill*.spec.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "axios": "^0.21.1",
+    "eslint": "^7.23.0",
+    "lodash": "^4.17.21",
+    "jest": "^26.4.2"
+  }
+}

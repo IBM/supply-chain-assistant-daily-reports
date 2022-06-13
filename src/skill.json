@@ -1,0 +1,576 @@
+{
+  "intents": [
+    {
+      "intent": "quickstart_evening_status",
+      "examples": [
+        {
+          "text": "can I see the close of day summary?"
+        },
+        {
+          "text": "get the end of day summary report"
+        },
+        {
+          "text": "how did we end the day today?"
+        },
+        {
+          "text": "show me evening summary report"
+        },
+        {
+          "text": "show me report"
+        },
+        {
+          "text": "Show me the end of day status"
+        },
+        {
+          "text": "show me the evening status report"
+        },
+        {
+          "text": "show today's end of day summary"
+        },
+        {
+          "text": "What about my evening report?"
+        },
+        {
+          "text": "what is the evening status?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "quickstart_morning_status",
+      "examples": [
+        {
+          "text": "get the morning report"
+        },
+        {
+          "text": "how are things this morning"
+        },
+        {
+          "text": "how are we starting the day?"
+        },
+        {
+          "text": "morning report"
+        },
+        {
+          "text": "show me my morning report"
+        },
+        {
+          "text": "show me report"
+        },
+        {
+          "text": "What is my start of day report?"
+        },
+        {
+          "text": "what is our morning report for the start of the day?"
+        },
+        {
+          "text": "what is the morning status?"
+        },
+        {
+          "text": "what report do I have this morning?"
+        }
+      ],
+      "description": ""
+    }
+  ],
+  "entities": [],
+  "metadata": {
+    "api_version": {
+      "major_version": "v2",
+      "minor_version": "2018-11-08"
+    }
+  },
+  "webhooks": [
+    {
+      "url": "https://api.ibm.com/scassistant/run/named-entities/na/recognize",
+      "name": "main_webhook",
+      "headers": [
+        {
+          "name": "X-IBM-Client-Id",
+          "value": "scassistant-$integrations.chat.private.tenant_id"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer $integrations.chat.private.jwt"
+        }
+      ]
+    }
+  ],
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "title": "Anything else",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "I didn't understand. You can try rephrasing."
+              },
+              {
+                "text": "Can you reword your statement? I'm not understanding."
+              },
+              {
+                "text": "I didn't get your meaning."
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          },
+          {
+            "user_defined": {
+              "sterling_status_response": {
+                "status": "NOT_UNDERSTOOD"
+              }
+            },
+            "response_type": "user_defined"
+          }
+        ]
+      },
+      "conditions": "anything_else",
+      "dialog_node": "Anything else",
+      "previous_sibling": "node_10_1617390310082",
+      "disambiguation_opt_out": true
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_9_1617396680554",
+      "context": {
+        "category_name": "$sterling_entities.category_name"
+      },
+      "conditions": "$sterling_entities.category_name",
+      "event_name": "input",
+      "dialog_node": "handler_10_1617396680568"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            "Which product category do you want to see?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "slot_6_1617379206519",
+      "event_name": "focus",
+      "dialog_node": "handler_3_1617379206528",
+      "previous_sibling": "handler_4_1617379206528"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_6_1617379206519",
+      "context": {
+        "category_name": "$sterling_entities.category_name"
+      },
+      "conditions": "$sterling_entities.category_name",
+      "event_name": "input",
+      "dialog_node": "handler_4_1617379206528"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            "Which product category do you want to see?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "slot_9_1617396680554",
+      "event_name": "focus",
+      "dialog_node": "handler_7_1617396680568",
+      "previous_sibling": "handler_10_1617396680568"
+    },
+    {
+      "type": "frame",
+      "title": "Quickstart morning status",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Here is your morning status for $category_name.value"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          },
+          {
+            "user_defined": {
+              "sterling_layout_template_response": {
+                "status": "OK",
+                "uihub_layout_templates": [
+                  {
+                    "id": "INVENTORY_FOR_SKU_AT_LOCATION_LAYOUT_TEMPLATE",
+                    "size": "small",
+                    "parameters": {
+                      "category": "<? $category_name.value ?>"
+                    }
+                  },
+                  {
+                    "id": "INVENTORY_FOR_SKU_AT_LOCATION_VIEW_ALL_LAYOUT_TEMPLATE",
+                    "size": "large",
+                    "parameters": {
+                      "category": "<? $category_name.value ?>"
+                    }
+                  }
+                ]
+              }
+            },
+            "response_type": "user_defined"
+          }
+        ]
+      },
+      "metadata": {
+        "_customization": {
+          "mcr": false
+        }
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_10_1617390310082"
+      },
+      "conditions": "$goal == \"quickstart_morning_status\"",
+      "digress_in": "does_not_return",
+      "user_label": "Quickstart morning status",
+      "dialog_node": "node_10_1614281940465",
+      "digress_out": "allow_all",
+      "previous_sibling": "node_5_1617303105337",
+      "digress_out_slots": "allow_all"
+    },
+    {
+      "type": "standard",
+      "title": "Clear context variables",
+      "output": {
+        "generic": []
+      },
+      "context": {
+        "goal": null,
+        "category_name": null
+      },
+      "conditions": "",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_10_1617390310082",
+      "previous_sibling": "node_8_1614802842566",
+      "disambiguation_opt_out": true
+    },
+    {
+      "type": "standard",
+      "title": "Set goal",
+      "output": {
+        "generic": []
+      },
+      "context": {
+        "goal": "<? intents[0].intent ?>"
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition",
+        "dialog_node": "node_5_1617303105337"
+      },
+      "conditions": "intents.size() > 0 && intents[0].confidence > 0.2",
+      "dialog_node": "node_1_1617396383328",
+      "previous_sibling": "Welcome",
+      "disambiguation_opt_out": true
+    },
+    {
+      "type": "standard",
+      "title": "Get named entities",
+      "actions": [
+        {
+          "name": "main_webhook",
+          "type": "webhook",
+          "parameters": {
+            "text": "<? input.text ?>"
+          },
+          "result_variable": "sterling_entities"
+        }
+      ],
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "true",
+      "dialog_node": "node_5_1617303105337",
+      "previous_sibling": "node_1_1617396383328",
+      "disambiguation_opt_out": true
+    },
+    {
+      "type": "frame",
+      "title": "Quickstart evening status",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Here is your evening status for $category_name.value"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          },
+          {
+            "user_defined": {
+              "sterling_layout_template_response": {
+                "status": "OK",
+                "uihub_layout_templates": [
+                  {
+                    "id": "INVENTORY_FOR_SKU_AT_LOCATION_LAYOUT_TEMPLATE",
+                    "size": "small",
+                    "parameters": {
+                      "category": "<? $category_name.value ?>"
+                    }
+                  },
+                  {
+                    "id": "INVENTORY_FOR_SKU_AT_LOCATION_VIEW_ALL_LAYOUT_TEMPLATE",
+                    "size": "large",
+                    "parameters": {
+                      "category": "<? $category_name.value ?>"
+                    }
+                  }
+                ]
+              }
+            },
+            "response_type": "user_defined"
+          }
+        ]
+      },
+      "metadata": {
+        "_customization": {
+          "mcr": false
+        }
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_10_1617390310082"
+      },
+      "conditions": "$goal == \"quickstart_evening_status\"",
+      "digress_in": "does_not_return",
+      "user_label": "Quickstart evening status",
+      "dialog_node": "node_8_1614802842566",
+      "digress_out": "allow_all",
+      "previous_sibling": "node_10_1614281940465",
+      "digress_out_slots": "allow_all"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "There are some technical difficulties"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          },
+          {
+            "user_defined": {
+              "sterling_status_response": {
+                "status": "INTERNAL_ERROR"
+              }
+            },
+            "response_type": "user_defined"
+          }
+        ]
+      },
+      "parent": "node_5_1617303105337",
+      "conditions": "anything_else",
+      "dialog_node": "response_10_1617385799577",
+      "previous_sibling": "response_5_1617303205892"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_8_1614802842566",
+      "disabled": true,
+      "dialog_node": "response_10_1617386773611",
+      "previous_sibling": "response_1_1617386022879"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_8_1614802842566",
+      "disabled": true,
+      "dialog_node": "response_1_1617386022879",
+      "previous_sibling": "slot_6_1617379206519"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Here is your morning status for $category_name.value"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ],
+        "user_defined": {
+          "sterling": {
+            "status": "OK",
+            "generic": [
+              {
+                "uihub_widget": {
+                  "id": "ICT2_INVENTORY_FOR_PRODUCT_CATEGORY_LAYOUT_TEMPLATE",
+                  "parameters": {
+                    "category": "$category_name.value"
+                  }
+                },
+                "response_type": "uihub_widget"
+              }
+            ]
+          }
+        }
+      },
+      "parent": "node_10_1614281940465",
+      "disabled": true,
+      "dialog_node": "response_4_1617820054729"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": []
+      },
+      "parent": "node_5_1617303105337",
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition",
+        "dialog_node": "node_10_1614281940465"
+      },
+      "conditions": "$sterling_entities",
+      "dialog_node": "response_5_1617303205892"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_8_1614802842566",
+      "variable": "category_name",
+      "conditions": "$category_name == null",
+      "dialog_node": "slot_6_1617379206519"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_10_1614281940465",
+      "variable": "category_name",
+      "conditions": "$category_name == null",
+      "dialog_node": "slot_9_1617396680554",
+      "previous_sibling": "response_4_1617820054729"
+    },
+    {
+      "type": "standard",
+      "title": "Welcome",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Hello. How can I help you?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "welcome",
+      "dialog_node": "Welcome",
+      "disambiguation_opt_out": true
+    }
+  ],
+  "counterexamples": [
+    {
+      "text": "show me inventory below stock for Pharma"
+    },
+    {
+      "text": "inventory below stock for Pharma"
+    },
+    {
+      "text": "show me inventory at location"
+    },
+    {
+      "text": "show me inventory for category Pharma"
+    },
+    {
+      "text": "what products have the least current demand?"
+    },
+    {
+      "text": "show me the safety stock levels for products"
+    },
+    {
+      "text": "inventory at risk for overstock"
+    },
+    {
+      "text": "which inventory is at risk for overstock?"
+    },
+    {
+      "text": "show me inventory with low days of supply"
+    },
+    {
+      "text": "what inventory still has high days of supply left?"
+    },
+    {
+      "text": "inventory for Pharma"
+    },
+    {
+      "text": "what is available for Pharma"
+    }
+  ],
+  "system_settings": {
+    "nlp": {
+      "model": "baseline"
+    },
+    "off_topic": {
+      "enabled": true
+    },
+    "disambiguation": {
+      "prompt": "Did you mean:",
+      "enabled": true,
+      "randomize": true,
+      "max_suggestions": 5,
+      "suggestion_text_policy": "user_label",
+      "none_of_the_above_prompt": "None of the above."
+    },
+    "system_entities": {
+      "enabled": true
+    },
+    "human_agent_assist": {
+      "prompt": "Did you mean:"
+    },
+    "intent_classification": {
+      "training_backend_version": "v2"
+    },
+    "spelling_auto_correct": true
+  },
+  "learning_opt_out": false,
+  "name": "Daily Report Sample",
+  "language": "en",
+  "description": "A  sample assistant for IBM Supply Chain Intelligence Suite"
+}
